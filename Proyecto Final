@@ -1,0 +1,393 @@
+import javax.swing.JOptionPane;
+
+/**
+ *
+ * @author jojul
+ */
+
+
+
+
+class Usuario {
+    String nombreCompleto;
+    String usuario;
+    String password;
+    boolean estadoActivo;
+    String correo;
+}
+
+class Evento {
+    String nombre;
+    String ciudad;
+    String direccion;
+    String categoria;
+    String fecha;
+    int capacidadTotal;
+    int capacidadDisponible;
+    String[] sillas;
+
+    Evento(int capacidadTotal) {
+        this.capacidadTotal = capacidadTotal;
+        this.capacidadDisponible = capacidadTotal;
+        this.sillas = new String[capacidadTotal];
+    }
+}
+
+class Factura {
+    long fechaFacturacion; // Utilizaremos un timestamp en milisegundos
+    Evento evento;         // Es una representación numérica de la fecha y hora actual. 
+    String nombreCliente;
+}
+
+    class SistemaEventos {
+
+    public static void main(String[] args) {
+        Usuario[] usuarios = new Usuario[10];
+        Evento[] eventos = new Evento[10];
+        Factura[] facturas = new Factura[100]; // Capacidad para 100 facturas
+        int opcion;
+
+        do {
+            opcion = Integer.parseInt(JOptionPane.showInputDialog(
+                    "Bienvenidos a Producciones Palace.\nPara hacer uso de los servicios de la productora necesitas ser +18\n1. Registrar usuario\n2. Autenticar usuario\n3. Registrar evento\n4. Editar evento\n5. Inactivar evento\n6. Agregar horario\n7. Vender boleto\n8. Facturar evento\n9. Anular factura\n10. Reportes de asignaciones\n11. Salir\n\nElija una opción ingresando el número:"));
+
+            switch (opcion) {
+                case 1:
+                    registrarUsuario(usuarios);
+                    break;
+                case 2:
+                    autenticarUsuario(usuarios);
+                    break;
+                case 3:
+                    registrarEvento(eventos);
+                    break;
+                case 4:
+                    editarEvento(eventos);
+                    break;
+                case 5:
+                    inactivarEvento(eventos);
+                    break;
+                case 6:
+                    agregarHorario(eventos);
+                    break;
+                case 7:
+                    venderBoleto(eventos, facturas);
+                    break;
+                case 8:
+                    facturarEvento(facturas);
+                    break;
+                case 9:
+                    anularFactura(facturas);
+                    break;
+                case 10:
+                    generarReportes(facturas);
+                    break;
+                case 11:
+                    JOptionPane.showMessageDialog(null, "Hasta luego.");
+                    break;
+                default:
+                    JOptionPane.showMessageDialog(null, "Opción inválida.");
+            }
+        } while (opcion != 11);
+    }
+
+    // Métodos para manejo de usuarios
+
+    public static void registrarUsuario(Usuario[] usuarios) {
+        Usuario nuevoUsuario = new Usuario();
+
+        nuevoUsuario.nombreCompleto = JOptionPane.showInputDialog("Nombre completo:");
+        nuevoUsuario.usuario = JOptionPane.showInputDialog("Usuario:");
+        nuevoUsuario.password = JOptionPane.showInputDialog("Contraseña:");
+        nuevoUsuario.correo = JOptionPane.showInputDialog("Correo electrónico:");
+        nuevoUsuario.estadoActivo = true;
+
+        // Agregar el nuevo usuario al array de usuarios
+        for (int i = 0; i < usuarios.length; i++) {
+            if (usuarios[i] == null) {
+                usuarios[i] = nuevoUsuario;
+                JOptionPane.showMessageDialog(null, "Usuario registrado exitosamente.");
+                break;
+            }
+        }
+    }
+                //Método para verificar usuarios
+    public static void autenticarUsuario(Usuario[] usuarios) {
+        String usuario = JOptionPane.showInputDialog("Usuario:");
+        String password = JOptionPane.showInputDialog("Contraseña:");
+        boolean encontrado = false;
+
+        for (Usuario u : usuarios) {
+            if (u != null && u.usuario.equals(usuario) && u.password.equals(password) && u.estadoActivo) {
+                JOptionPane.showMessageDialog(null, "Usuario autenticado exitosamente.");
+                encontrado = true;
+                break;
+            }
+        }
+
+        if (!encontrado) {
+            JOptionPane.showMessageDialog(null, "Usuario no encontrado o contraseña incorrecta.");
+        }
+    }
+
+
+    // Métodos para manejo de eventos
+
+    public static void registrarEvento(Evento[] eventos) {
+        String nombre = JOptionPane.showInputDialog("Nombre del evento:");
+        String ciudad = JOptionPane.showInputDialog("Ciudad:");
+        String direccion = JOptionPane.showInputDialog("Dirección:");
+        String categoria = JOptionPane.showInputDialog("Categoría:");
+        String fecha = JOptionPane.showInputDialog("Fecha:");
+        int capacidadTotal = Integer.parseInt(JOptionPane.showInputDialog("Capacidad total del evento:"));
+
+        Evento nuevoEvento = new Evento(capacidadTotal);
+        nuevoEvento.nombre = nombre;
+        nuevoEvento.ciudad = ciudad;
+        nuevoEvento.direccion = direccion;
+        nuevoEvento.categoria = categoria;
+        nuevoEvento.fecha = fecha;
+
+        // Agregar el nuevo evento al array de eventos
+        for (int i = 0; i < eventos.length; i++) {
+            if (eventos[i] == null) {
+                eventos[i] = nuevoEvento;
+                JOptionPane.showMessageDialog(null, "Evento registrado exitosamente.");
+                break;
+            }
+        }
+    }
+
+    public static void editarEvento(Evento[] eventos) {
+        String nombreEvento = JOptionPane.showInputDialog("Nombre del evento a editar:");
+        boolean encontrado = false;
+
+        for (Evento evento : eventos) {
+            if (evento != null && evento.nombre.equals(nombreEvento)) {
+                // Realizar las modificaciones necesarias en los detalles del evento
+                evento.nombre = JOptionPane.showInputDialog("Nuevo nombre del evento:");
+                evento.ciudad = JOptionPane.showInputDialog("Nueva ciudad:");
+                evento.direccion = JOptionPane.showInputDialog("Nueva dirección:");
+                evento.categoria = JOptionPane.showInputDialog("Nueva categoría:");
+                evento.fecha = JOptionPane.showInputDialog("Nueva fecha:");
+
+                JOptionPane.showMessageDialog(null, "Evento editado exitosamente.");
+                encontrado = true;
+                break;
+            }
+        }
+
+        if (!encontrado) {
+            JOptionPane.showMessageDialog(null, "Evento no encontrado.");
+        }
+    }
+
+    public static void inactivarEvento(Evento[] eventos) {
+        String nombreEvento = JOptionPane.showInputDialog("Nombre del evento a inactivar:");
+        boolean encontrado = false;
+
+        for (Evento evento : eventos) {
+            if (evento != null && evento.nombre.equals(nombreEvento)) {
+                evento.capacidadDisponible = 0; // Evento inactivado
+                JOptionPane.showMessageDialog(null, "Evento inactivado exitosamente.");
+                encontrado = true;
+                break;
+            }
+        }
+
+        if (!encontrado) {
+            JOptionPane.showMessageDialog(null, "Evento no encontrado.");
+        }
+    }
+
+     public static void agregarHorario(Evento[] eventos) {
+        String nombreEvento = JOptionPane.showInputDialog("Nombre del evento al que agregar horario:");
+        boolean encontrado = false;
+
+        for (Evento evento : eventos) {
+            if (evento != null && evento.nombre.equals(nombreEvento)) {
+                String nuevoHorario = JOptionPane.showInputDialog("Nuevo horario:");
+                boolean horarioExistente = false;
+
+                // Verificar si el horario ya existe
+                for (String horario : evento.sillas) {
+                    if (horario != null && horario.equals(nuevoHorario)) {
+                        JOptionPane.showMessageDialog(null, "El horario ya existe para este evento.");
+                        horarioExistente = true;
+                        break;
+                    }
+                }
+
+                if (!horarioExistente) {
+                    // Agregar el horario al array de horarios del evento
+                    for (int i = 0; i < evento.sillas.length; i++) {
+                        if (evento.sillas[i] == null) {
+                            evento.sillas[i] = nuevoHorario;
+                            JOptionPane.showMessageDialog(null, "Horario agregado exitosamente.");
+                            encontrado = true;
+                            break;
+                        }
+                    }
+                }
+                break;
+            }
+        }
+
+        if (!encontrado) {
+            JOptionPane.showMessageDialog(null, "Evento no encontrado.");
+        }
+    }
+     
+     public static void venderBoleto(Evento[] eventos, Factura[] facturas) {
+        String nombreEvento = JOptionPane.showInputDialog("Nombre del evento:");
+        Evento evento = buscarEvento(eventos, nombreEvento);
+
+        if (evento != null) {
+            if (evento.capacidadDisponible > 0) {
+                String horario = JOptionPane.showInputDialog("Horario:");
+                int numSilla = Integer.parseInt(JOptionPane.showInputDialog("Número de silla:"));
+
+                if (numSilla >= 1 && numSilla <= evento.capacidadTotal && evento.sillas[numSilla - 1] == null) {
+                    String nombreCliente = JOptionPane.showInputDialog("Nombre del cliente:");
+
+                    Factura nuevaFactura = new Factura();
+                    nuevaFactura.fechaFacturacion = System.currentTimeMillis();
+                    nuevaFactura.evento = evento;
+                    nuevaFactura.nombreCliente = nombreCliente;
+
+                    evento.capacidadDisponible--;
+                    evento.sillas[numSilla - 1] = nombreCliente;
+
+                    for (int i = 0; i < facturas.length; i++) {
+                        if (facturas[i] == null) {
+                            facturas[i] = nuevaFactura;
+                            JOptionPane.showMessageDialog(null, "Boleto vendido exitosamente.");
+                            break;
+                        }
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "La silla está ocupada o el número de silla es inválido.");
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "El evento está agotado.");
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Evento no encontrado.");
+        }
+    }
+                        //Método para facturar eventos
+     public static void facturarEvento(Factura[] facturas) {
+        String nombreCliente = JOptionPane.showInputDialog("Nombre del cliente:");
+        boolean encontrado = false;
+
+        for (Factura factura : facturas) {
+            if (factura != null && factura.nombreCliente.equals(nombreCliente)) {
+                JOptionPane.showMessageDialog(null, "Factura del cliente: " +
+                        factura.nombreCliente + "\nEvento: " + factura.evento.nombre +
+                        "\nFecha y hora de facturación: " + new java.util.Date(factura.fechaFacturacion)); //Java.util.Date es un método que 
+                encontrado = true;                                                                             //muestra la fecha y hora actuales      
+                break;
+            }
+        }
+
+        if (!encontrado) {
+            JOptionPane.showMessageDialog(null, "Factura no encontrada.");
+        }
+    }
+                        //Método para anular facturas
+     public static void anularFactura(Factura[] facturas) {
+        String nombreCliente = JOptionPane.showInputDialog("Nombre del cliente:");
+        boolean encontrado = false;
+
+        for (Factura factura : facturas) {
+            if (factura != null && factura.nombreCliente.equals(nombreCliente)) {
+                factura.evento.capacidadDisponible++;
+                factura.evento.sillas[buscarSillaOcupada(factura.evento, factura.nombreCliente)] = null;
+                encontrado = true;
+                break;
+            }
+        }
+
+        if (encontrado) {
+            JOptionPane.showMessageDialog(null, "Factura anulada exitosamente.");
+        } else {
+            JOptionPane.showMessageDialog(null, "Factura no encontrada.");
+        }
+    }
+     
+      public static void generarReportes(Factura[] facturas) {
+        int[] boletasPorDia = new int[7];
+        int[] gananciasPorFuncion = new int[7];
+
+        for (Factura factura : facturas) {
+            if (factura != null) {
+                int diaSemana = obtenerDiaSemana(factura.fechaFacturacion);
+                boletasPorDia[diaSemana]++;
+                gananciasPorFuncion[diaSemana] += factura.evento.capacidadTotal;
+            }
+        }
+
+        int diaMayorBoletas = encontrarMayor(boletasPorDia);
+        int diaMayorGanancias = encontrarMayor(gananciasPorFuncion);
+
+        JOptionPane.showMessageDialog(null,
+                "Día con más boletas vendidas: " + obtenerNombreDia(diaMayorBoletas) +
+                "\nDía con mayor ganancia: " + obtenerNombreDia(diaMayorGanancias));
+    }
+      
+     public static Evento buscarEvento(Evento[] eventos, String nombreEvento) {
+        for (Evento evento : eventos) {
+            if (evento != null && evento.nombre.equals(nombreEvento)) {
+                return evento;
+            }
+        }
+        return null;
+    }
+     
+     public static int buscarSillaOcupada(Evento evento, String nombreCliente) {
+        for (int i = 0; i < evento.sillas.length; i++) {
+            if (evento.sillas[i] != null && evento.sillas[i].equals(nombreCliente)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+     
+
+    
+
+    public static int obtenerDiaSemana(long timestamp) {            // Es una representación numérica de la fecha y hora actual.
+        return (int) ((timestamp / (24 * 60 * 60 * 1000) + 4) % 7); // Suponemos que hoy es miércoles (4)
+    }
+
+    public static String obtenerNombreDia(int dia) {
+        switch (dia) {
+            case 0: return "Domingo";
+            case 1: return "Lunes";
+            case 2: return "Martes";
+            case 3: return "Miércoles";
+            case 4: return "Jueves";
+            case 5: return "Viernes";
+            case 6: return "Sábado";
+            default: return "";
+        }
+    }
+
+    public static int encontrarMayor(int[] array) {
+        int mayor = array[0];
+        int indiceMayor = 0;
+
+        for (int i = 1; i < array.length; i++) {
+            if (array[i] > mayor) {
+                mayor = array[i];
+                indiceMayor = i;
+            }
+        }
+
+        return indiceMayor;
+    }
+
+}
+
+
+// José Julián López Rivera
